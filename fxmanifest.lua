@@ -2,7 +2,7 @@ fx_version 'bodacious'
 game 'gta5'
 
 author 'InZidiuZ'
-description 'Legacy Fuel'
+description 'Legacy Fuel (modified for hsn-inventory)'
 version '1.3'
 
 -- What to run
