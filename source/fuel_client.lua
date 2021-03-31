@@ -239,7 +239,7 @@ Citizen.CreateThread(function()
 					local stringCoords = GetEntityCoords(isNearPump)
 
 					if currentCash then
-						if currentCash >= Config.JerryCanCost and not currentWeapon or currentWeapon.item.name ~= 'WEAPON_PETROLCAN' then
+						if currentWeapon and currentCash >= Config.JerryCanCost and not currentWeapon.item.name ~= 'WEAPON_PETROLCAN' then
 							DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.PurchaseJerryCan)
 
 							if IsControlJustReleased(0, 38) then
@@ -247,7 +247,7 @@ Citizen.CreateThread(function()
 								TriggerServerEvent('fuel:pay', Config.JerryCanCost, 'getcan')
 
 							end
-						elseif currentWeapon.item.name == 'WEAPON_PETROLCAN' then
+						elseif currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
 							local refillCost = Round(Config.RefillCost * (1 - currentWeapon.item.metadata.durability / 100))
 
 							if refillCost > 0 then
