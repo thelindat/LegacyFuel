@@ -139,7 +139,7 @@ AddEventHandler('fuel:startFuelUpTick', function(pumpObject, ped, vehicle)
 		TriggerServerEvent('fuel:pay', currentCost)
 	end
 	if currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
-		TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.slot, currentWeapon.item)
+		TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.item)
 	end
 
 	currentCost = 0.0
@@ -257,7 +257,7 @@ Citizen.CreateThread(function()
 										TriggerServerEvent('fuel:pay', refillCost)
 										currentWeapon.item.metadata.durability = 100
 
-										TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.slot, currentWeapon.item)
+										TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.item)
 									end
 								else
 									DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.NotEnoughCashJerryCan)
