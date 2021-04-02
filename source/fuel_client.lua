@@ -239,7 +239,7 @@ Citizen.CreateThread(function()
 					local stringCoords = GetEntityCoords(isNearPump)
 
 					if currentCash then
-						if currentWeapon and currentCash >= Config.JerryCanCost and not currentWeapon.item.name ~= 'WEAPON_PETROLCAN' then
+						if (not currentWeapon or currentWeapon.item.name ~= 'WEAPON_PETROLCAN') and currentCash >= Config.JerryCanCost then
 							DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.PurchaseJerryCan)
 
 							if IsControlJustReleased(0, 38) then
