@@ -88,9 +88,13 @@ Citizen.CreateThread(function()
 		if pumpDistance < 2.5 then
 			isNearPump = pumpObject
 
-			ESX.TriggerServerCallback('hsn-inventory:getItemCount',function(count)
-				currentCash = count
-			end, 'money')
+			local playerData = ESX.GetPlayerData()
+			for i=1, #playerData.accounts, 1 do
+				if playerData.accounts[i].name == 'money' then
+					currentCash = playerData.accounts[i].money
+					break
+				end
+			end
 		else
 			isNearPump = false
 
@@ -245,6 +249,8 @@ Citizen.CreateThread(function()
 							if IsControlJustReleased(0, 38) then
 
 								TriggerServerEvent('fuel:pay', Config.JerryCanCost, 'getcan')
+
+								currentCash = currentCash - Config.JerryCanCost
 
 							end
 						elseif currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
