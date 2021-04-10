@@ -74,8 +74,8 @@ Citizen.CreateThread(function()
 	end
 end)
 
-RegisterNetEvent('hsn-inventory:currentWeapon')
-AddEventHandler('hsn-inventory:currentWeapon', function(data)
+RegisterNetEvent('linden_inventory:currentWeapon')
+AddEventHandler('linden_inventory:currentWeapon', function(data)
 	currentWeapon = data
 end)
 
@@ -114,11 +114,11 @@ AddEventHandler('fuel:startFuelUpTick', function(pumpObject, ped, vehicle)
 		local extraCost = fuelToAdd / 1.5 * Config.CostMultiplier
 
 		if not pumpObject then
-			if currentWeapon and currentWeapon.item.metadata.durability > 0 then
+			if currentWeapon and currentWeapon.metadata.durability > 0 then
 				if oldFuel + fuelToAdd > 100 then fuelToAdd = 1 end
 				currentFuel = oldFuel + fuelToAdd
-				currentWeapon.item.metadata.durability = currentWeapon.item.metadata.durability - fuelToAdd
-				if currentWeapon.item.metadata.durability <= 0 then currentWeapon.item.metadata.durability = 0 isFueling = false end
+				currentWeapon.metadata.durability = currentWeapon.metadata.durability - fuelToAdd
+				if currentWeapon.metadata.durability <= 0 then currentWeapon.metadata.durability = 0 isFueling = false end
 			else
 				isFueling = false
 			end
@@ -142,8 +142,8 @@ AddEventHandler('fuel:startFuelUpTick', function(pumpObject, ped, vehicle)
 	if pumpObject then
 		TriggerServerEvent('fuel:pay', currentCost)
 	end
-	if currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
-		TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.item)
+	if currentWeapon and currentWeapon.name == 'WEAPON_PETROLCAN' then
+		TriggerServerEvent('linden_inventory:updateWeapon', currentWeapon)
 	end
 
 	currentCost = 0.0
@@ -152,7 +152,7 @@ end)
 AddEventHandler('fuel:refuelFromPump', function(pumpObject, ped, vehicle)
 	TaskTurnPedToFaceEntity(ped, vehicle, 1000)
 	Citizen.Wait(1000)
-	if currentWeapon and pumpObject then TriggerEvent('hsn-inventory:client:weapon', currentWeapon.item) end
+	if currentWeapon and pumpObject then TriggerEvent('linden_inventory:weapon', currentWeapon) end
 	LoadAnimDict("timetable@gardener@filling_can")
 	TaskPlayAnim(ped, "timetable@gardener@filling_can", "gar_ig_5_filling_can", 2.0, 8.0, -1, 50, 0, 0, 0, 0)
 
@@ -176,7 +176,7 @@ AddEventHandler('fuel:refuelFromPump', function(pumpObject, ped, vehicle)
 			DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.CancelFuelingPump .. extraString)
 			DrawText3Ds(vehicleCoords.x, vehicleCoords.y, vehicleCoords.z + 0.5, Round(currentFuel, 1) .. "%")
 		else
-			DrawText3Ds(vehicleCoords.x, vehicleCoords.y, vehicleCoords.z + 0.5, Config.Strings.CancelFuelingJerryCan .. "\nGas can: ~g~" .. currentWeapon.item.metadata.durability .. "% | Vehicle: " .. Round(currentFuel, 1) .. "%")
+			DrawText3Ds(vehicleCoords.x, vehicleCoords.y, vehicleCoords.z + 0.5, Config.Strings.CancelFuelingJerryCan .. "\nGas can: ~g~" .. currentWeapon.metadata.durability .. "% | Vehicle: " .. Round(currentFuel, 1) .. "%")
 		end
 
 		if not IsEntityPlayingAnim(ped, "timetable@gardener@filling_can", "gar_ig_5_filling_can", 3) then
@@ -198,7 +198,7 @@ Citizen.CreateThread(function()
 	while true do
 		local ped = PlayerPedId()
 
-		if not isFueling and ((isNearPump and GetEntityHealth(isNearPump) > 0) or (currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' and not isNearPump)) then
+		if not isFueling and ((isNearPump and GetEntityHealth(isNearPump) > 0) or (currentWeapon and currentWeapon.name == 'WEAPON_PETROLCAN' and not isNearPump)) then
 			if IsPedInAnyVehicle(ped) and GetPedInVehicleSeat(GetVehiclePedIsIn(ped), -1) == ped then
 				local pumpCoords = GetEntityCoords(isNearPump)
 
@@ -212,16 +212,16 @@ Citizen.CreateThread(function()
 						local stringCoords = GetEntityCoords(isNearPump)
 						local canFuel = true
 
-						if currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
+						if currentWeapon and currentWeapon.name == 'WEAPON_PETROLCAN' then
 							stringCoords = vehicleCoords
 
-							if currentWeapon.item.metadata.durability <= 0 then
+							if currentWeapon.metadata.durability <= 0 then
 								canFuel = false
 							end
 						end
 
 						if GetVehicleFuelLevel(vehicle) < 95 and canFuel then
-							if currentCash > 0 or currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
+							if currentCash > 0 or currentWeapon and currentWeapon.name == 'WEAPON_PETROLCAN' then
 								DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.EToRefuel)
 
 								if IsControlJustReleased(0, 38) then
@@ -243,7 +243,7 @@ Citizen.CreateThread(function()
 					local stringCoords = GetEntityCoords(isNearPump)
 
 					if currentCash then
-						if (not currentWeapon or currentWeapon.item.name ~= 'WEAPON_PETROLCAN') and currentCash >= Config.JerryCanCost then
+						if (not currentWeapon or currentWeapon.name ~= 'WEAPON_PETROLCAN') and currentCash >= Config.JerryCanCost then
 							DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.PurchaseJerryCan)
 
 							if IsControlJustReleased(0, 38) then
@@ -253,17 +253,17 @@ Citizen.CreateThread(function()
 								currentCash = currentCash - Config.JerryCanCost
 
 							end
-						elseif currentWeapon and currentWeapon.item.name == 'WEAPON_PETROLCAN' then
-							local refillCost = Round(Config.RefillCost * (1 - currentWeapon.item.metadata.durability / 100))
+						elseif currentWeapon and currentWeapon.name == 'WEAPON_PETROLCAN' then
+							local refillCost = Round(Config.RefillCost * (1 - currentWeapon.metadata.durability / 100))
 
 							if refillCost > 0 then
 								if currentCash >= refillCost then
 									DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.RefillJerryCan .. refillCost)
 									if IsControlJustReleased(0, 38) then
 										TriggerServerEvent('fuel:pay', refillCost)
-										currentWeapon.item.metadata.durability = 100
+										currentWeapon.metadata.durability = 100
 
-										TriggerServerEvent('hsn-inventory:server:updateWeapon', currentWeapon.item)
+										TriggerServerEvent('linden_inventory:updateWeapon', currentWeapon)
 									end
 								else
 									DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.NotEnoughCashJerryCan)
